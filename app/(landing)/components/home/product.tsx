@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FiPlus } from "react-icons/fi";
 import Button from "../ui/button";
+import PriceConverter from "@/app/utils/price-converter";
 
 const ProductList = [
   {
@@ -66,7 +67,7 @@ const ProductSelection = () => {
       <div className="pt-8 container mx-auto pb-24">
         <div className="grid grid-cols-4 gap-5">
           {ProductList.map((product, index) => (
-            <Link href="#" key={index} className="p-1">
+            <Link href={`/product/${product.name}`} key={index} className="p-1">
               <div className="p-1.5 border-1 text-primary-light rounded-1 h-[389px]">
                 <div className="bg-primary-light flex mx-auto items-center mb-[10px] relative">
                   <Image
@@ -86,11 +87,7 @@ const ProductSelection = () => {
                 <div className="flex justify-between text-gray-500">
                   {product.category}
                   <h3 className="text-primary">
-                    {Intl.NumberFormat("id-ID", {
-                      style: "currency",
-                      currency: "IDR",
-                      maximumSignificantDigits: 3,
-                    }).format(product.price)}
+                    {PriceConverter(product.price)}
                   </h3>
                 </div>
               </div>
