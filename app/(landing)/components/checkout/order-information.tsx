@@ -36,7 +36,7 @@ const OrderInformation = ({ formData, setFormData }: TOrderInformation) => {
             placeholder="Type your Number"
             id="customerContact"
             name="customerContact"
-            value={formData.customerContact}
+            value={formData.customerContact ?? ""}
             onChange={handleInputChange}
           />
         </div>
