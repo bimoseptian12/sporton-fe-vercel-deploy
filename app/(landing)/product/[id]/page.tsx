@@ -4,7 +4,7 @@ import ProductActions from "../../components/product-detail/product-action";
 import { getProductDetail } from "@/app/services/product.service";
 import PriceConverter from "@/app/utils/price-converter";
 
-type TPageProps = {
+export type TPageProps = {
   params: Promise<{ id: string }>;
 };
 
