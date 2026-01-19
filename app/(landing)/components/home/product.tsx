@@ -1,8 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { FiPlus } from "react-icons/fi";
 import Button from "../ui/button";
 import PriceConverter from "@/app/utils/price-converter";
+import { Product } from "@/app/types";
+import { getImageUrl } from "@/app/lib/api";
+import { useCartStore } from "@/app/hooks/use-cart-store";
 
 const ProductList = [
   {
@@ -55,8 +60,19 @@ const ProductList = [
     imgUrl: "Group 12.png",
   },
 ];
+type TProductsProps = {
+  products: Product[];
+};
 
-const ProductSelection = () => {
+const ProductSelection = ({ products }: TProductsProps) => {
+  const { addItem } = useCartStore();
+
+  const handleAddToCart = (e: React.MouseEvent, product: Product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem(product);
+  };
+
   return (
     <section className="pt-16">
       <div className="container mx-auto text-center">
@@ -66,18 +82,25 @@ const ProductSelection = () => {
       </div>
       <div className="pt-8 container mx-auto pb-24">
         <div className="grid grid-cols-4 gap-5">
-          {ProductList.map((product, index) => (
-            <Link href={`/product/${product.name}`} key={index} className="p-1">
+          {products.map((product) => (
+            <Link
+              href={`/product/${product._id}`}
+              key={product._id}
+              className="p-1"
+            >
               <div className="p-1.5 border-1 text-primary-light rounded-1 h-[389px]">
                 <div className="bg-primary-light flex mx-auto items-center mb-[10px] relative">
                   <Image
-                    src={`/images/product/${product.imgUrl}`}
+                    src={getImageUrl(product.imageUrl)}
                     alt={product.name}
                     width={300}
                     height={300}
                     className="aspect-square object-contain flex mx-auto"
                   ></Image>
-                  <Button className="w-10 h-10 p-2! absolute top-2 right-2 ">
+                  <Button
+                    className="w-10 h-10 p-2! absolute top-2 right-2 "
+                    onClick={(e) => handleAddToCart(e, product)}
+                  >
                     <FiPlus size={24} />
                   </Button>
                 </div>
@@ -85,7 +108,7 @@ const ProductSelection = () => {
                   {product.name}
                 </div>
                 <div className="flex justify-between text-gray-500">
-                  {product.category}
+                  {product.category.name}
                   <h3 className="text-primary">
                     {PriceConverter(product.price)}
                   </h3>
@@ -97,7 +120,5 @@ const ProductSelection = () => {
       </div>
     </section>
   );
-  1;
-  11;
 };
 export default ProductSelection;

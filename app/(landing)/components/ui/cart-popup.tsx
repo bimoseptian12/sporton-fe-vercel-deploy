@@ -4,6 +4,8 @@ import { FiTrash2 } from "react-icons/fi";
 import Button from "../ui/button";
 import { FiArrowRight } from "react-icons/fi";
 import { useRouter } from "next/navigation";
+import { getImageUrl } from "@/app/lib/api";
+import { useCartStore } from "@/app/hooks/use-cart-store";
 
 export const cartList = [
   {
@@ -38,11 +40,14 @@ export const cartList = [
 
 const CartPopup = () => {
   const { push } = useRouter();
+  const { items, removeItem } = useCartStore();
 
-  const totalPrice = cartList.reduce(
+  const totalPrice = items.reduce(
     (total, item) => total + item.price * item.qty,
     0,
   );
+
+  console.log("Cart item", items);
 
   const handleCheckout = () => {
     push("/checkout");
@@ -53,33 +58,41 @@ const CartPopup = () => {
       <div className="p-4 border-b border-gray-200 font-bold text-center">
         Shopping Cart
       </div>
-      {cartList.map((item, index) => (
-        <div className="border-b border-gray-200 p-4 flex gap-3   " key={index}>
-          <div className="bg-primary-light aspect-square w-16 flex justify-center items-center ">
-            <Image
-              src={`/images/product/${item.imgUrl}`}
-              width={63}
-              height={63}
-              alt={item.name}
-              className="object-contain aspect-square"
-            ></Image>
-          </div>
-          <div className="self-center ">
-            <div className="text-sm font-medium">{item.name}</div>
-            <div className="flex gap-3 font-medium text-xs">
-              <div>{item.qty}x</div>
-              <div className="text-primary">{PriceConverter(item.price)}</div>
-            </div>
-          </div>
-          <Button
-            size="small"
-            variant="ghost"
-            className="w-7 h-7 p-0! self-center ml-auto"
+      {items.length ? (
+        items.map((item, index) => (
+          <div
+            className="border-b border-gray-200 p-4 flex gap-3   "
+            key={index}
           >
-            <FiTrash2></FiTrash2>
-          </Button>
-        </div>
-      ))}
+            <div className="bg-primary-light aspect-square w-16 flex justify-center items-center ">
+              <Image
+                src={getImageUrl(item.imageUrl)}
+                width={63}
+                height={63}
+                alt={item.name}
+                className="object-contain aspect-square"
+              ></Image>
+            </div>
+            <div className="self-center ">
+              <div className="text-sm font-medium">{item.name}</div>
+              <div className="flex gap-3 font-medium text-xs">
+                <div>{item.qty}x</div>
+                <div className="text-primary">{PriceConverter(item.price)}</div>
+              </div>
+            </div>
+            <Button
+              size="small"
+              variant="ghost"
+              className="w-7 h-7 p-0! self-center ml-auto"
+              onClick={() => removeItem(item._id)}
+            >
+              <FiTrash2></FiTrash2>
+            </Button>
+          </div>
+        ))
+      ) : (
+        <div className="text-center py-5">Your Shopping Cart is Empty</div>
+      )}
       <div className="border-t border-gray-200 py-4 px-4">
         <div className="flex justify-between">
           <div className="font-sm ">Total</div>

@@ -1,12 +1,24 @@
 import Image from "next/image";
+import { getImageUrl } from "@/app/lib/api";
 import ProductActions from "../../components/product-detail/product-action";
+import { getProductDetail } from "@/app/services/product.service";
+import PriceConverter from "@/app/utils/price-converter";
 
-const ProductDetail = () => {
+type TPageProps = {
+  params: Promise<{ id: string }>;
+};
+
+const ProductDetail = async ({ params }: TPageProps) => {
+  const { id } = await params;
+
+  const product = await getProductDetail(id);
+  console.log(product);
+
   return (
     <main className="container mx-auto py-40 flex gap-12">
       <div className="bg-primary-light aspect-square min-w-140 flex justify-center items-center">
         <Image
-          src="/images/product/racket.png"
+          src={getImageUrl(product.imageUrl)}
           alt="product-4-image"
           width={550}
           height={550}
@@ -14,26 +26,15 @@ const ProductDetail = () => {
         ></Image>
       </div>
       <div className="w-full py-7">
-        <h1 className="font-bold text-5xl mb-6">SportsOn HyperSoccer v2</h1>
+        <h1 className="font-bold text-5xl mb-6">{product.name}</h1>
         <div className="py-2 px-6 bg-primary-light rounded-full text-primary w-fit mb-5">
-          Football
+          {product.category.name}
         </div>
-        <p className="leading-loose mb-8">
-          The SportsOn HyperSoccer v2 is engineered for the player who demands
-          precision, power, and unrivaled speed on the pitch. Featuring a
-          striking, two-toned black and white design with deep crimson accents,
-          these cleats don't just perform—they make a statement. Experience the
-          future of football footwear with v2's enhanced fit and cutting-edge
-          traction.
-        </p>
+        <p className="leading-loose mb-8">{product.description}</p>
         <div className="text-primary text-[32px] font-semibold mb-12">
-          {Intl.NumberFormat("id-ID", {
-            style: "currency",
-            currency: "IDR",
-            maximumSignificantDigits: 3,
-          }).format(458000)}
+          {PriceConverter(product.price)}
         </div>
-        <ProductActions />
+        <ProductActions product={product} stock={product.stock} />
       </div>
     </main>
   );
