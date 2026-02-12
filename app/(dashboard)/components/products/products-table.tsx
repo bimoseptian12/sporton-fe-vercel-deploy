@@ -1,32 +1,16 @@
+import { getImageUrl } from "@/app/lib/api";
+import { Product } from "@/app/types";
 import PriceConverter from "@/app/utils/price-converter";
 import Image from "next/image";
 import { FiEdit, FiTrash } from "react-icons/fi";
 
-const productData = [
-  {
-    name: "SportOn Product 1",
-    imageUrl: "/images/product/racket.png",
-    category: "Running",
-    price: 289000,
-    stock: 3,
-  },
-  {
-    name: "SportOn Product 2",
-    imageUrl: "/images/product/shoes 2.png",
-    category: "Running",
-    price: 126000,
-    stock: 3,
-  },
-  {
-    name: "SportOn Product 3",
-    imageUrl: "/images/product/sportshirt 1.png",
-    category: "Running",
-    price: 150000,
-    stock: 3,
-  },
-];
+type TProductTableProps = {
+  products: Product[];
+  onDelete?: (id: string) => void;
+  onEdit?: (product: Product) => void;
+};
 
-const ProductTable = () => {
+const ProductTable = ({ products, onDelete, onEdit }: TProductTableProps) => {
   return (
     <div className="bg-white rounded-xl border border-gray-200">
       <table className="w-full text-left border-collapse">
@@ -40,9 +24,9 @@ const ProductTable = () => {
           </tr>
         </thead>
         <tbody>
-          {productData.map((data, index) => (
+          {products.map((data, index) => (
             <tr
-              key={index}
+              key={data._id}
               className="border-b border-gray-200 last:border-b-0"
             >
               <td className="px-6 py-4 font-medium">
@@ -50,7 +34,7 @@ const ProductTable = () => {
                   <div className="aspect-square bg-gray-100 rounded-md">
                     <Image
                       className="aspect-square object-contain"
-                      src={data.imageUrl}
+                      src={getImageUrl(data.imageUrl)}
                       alt=""
                       width={52}
                       height={52}
@@ -62,7 +46,7 @@ const ProductTable = () => {
 
               <td className="px-6 py-4  font-medium">
                 <div className="rounded-md bg-gray-200 px-2 py-1 w-fit">
-                  {data.category}
+                  {data.category.name}
                 </div>
               </td>
               <td className="px-6 py-4 font-medium">
@@ -70,10 +54,16 @@ const ProductTable = () => {
               </td>
               <td className="px-6 py-4 font-medium">{data.stock} Units</td>
               <td className="px-6 py-7.5 flex gap-3 items-center h-full text-gray-600">
-                <button>
+                <button
+                  onClick={() => onEdit?.(data)}
+                  className="cursor-pointer"
+                >
                   <FiEdit size={20}></FiEdit>
                 </button>
-                <button>
+                <button
+                  onClick={() => onDelete?.(data._id)}
+                  className="cursor-pointer"
+                >
                   <FiTrash size={20}></FiTrash>
                 </button>
               </td>

@@ -1,3 +1,4 @@
+import { Transaction } from "@/app/types";
 import PriceConverter from "@/app/utils/price-converter";
 import Image from "next/image";
 import { FiEdit, FiTrash, FiEye } from "react-icons/fi";
@@ -26,11 +27,15 @@ const transactionData = [
   },
 ];
 
-type TCategoryTableProps = {
-  onViewDetails: () => void;
+type TTransactionTableProps = {
+  onViewDetails: (transaction: Transaction) => void;
+  transactions: Transaction[];
 };
 
-const CategoryTable = ({ onViewDetails }: TCategoryTableProps) => {
+const TransactionTable = ({
+  onViewDetails,
+  transactions,
+}: TTransactionTableProps) => {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "pending":
@@ -55,21 +60,25 @@ const CategoryTable = ({ onViewDetails }: TCategoryTableProps) => {
           </tr>
         </thead>
         <tbody>
-          {transactionData.map((data, index) => (
+          {transactions.map((data) => (
             <tr
-              key={index}
+              key={data._id}
               className="border-b border-gray-200 last:border-b-0"
             >
               <td className="px-6 py-4 font-medium">
-                <div className="flex gap-2 items-center ">
-                  <span className="">{data.date}</span>
-                </div>
+                {new Date(data.createdAt).toLocaleDateString("id-ID", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </td>
 
-              <td className="px-6 py-4 font-medium">{data.customer}</td>
-              <td className="px-6 py-4 font-medium">{data.contact}</td>
+              <td className="px-6 py-4 font-medium">{data.customerName}</td>
+              <td className="px-6 py-4 font-medium">{data.customerContact}</td>
               <td className="px-6 py-4 font-medium">
-                {PriceConverter(data.total)}
+                {PriceConverter(parseInt(data.totalPayment))}
               </td>
               <td className="px-6 py-4 font-medium">
                 <div
@@ -80,7 +89,7 @@ const CategoryTable = ({ onViewDetails }: TCategoryTableProps) => {
               </td>
               <td className="px-6 py-7.5 flex gap-3 items-center h-full text-gray-600">
                 <button
-                  onClick={onViewDetails}
+                  onClick={() => onViewDetails(data)}
                   className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 w-fit py-1 px-2 rounded-md"
                 >
                   <FiEye size={18}></FiEye>View Details
@@ -93,4 +102,4 @@ const CategoryTable = ({ onViewDetails }: TCategoryTableProps) => {
     </div>
   );
 };
-export default CategoryTable;
+export default TransactionTable;

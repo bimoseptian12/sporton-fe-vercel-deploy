@@ -1,22 +1,20 @@
+import { getImageUrl } from "@/app/lib/api";
+import { Category } from "@/app/types";
 import PriceConverter from "@/app/utils/price-converter";
 import Image from "next/image";
 import { FiEdit, FiTrash } from "react-icons/fi";
 
-const categoryData = [
-  {
-    name: "Running",
-    imageUrl: "/images/category/category-running.png",
-    description: "lorem ipsum",
-  },
+type TCategoryTableProps = {
+  categories: Category[];
+  onEdit: (category: Category) => void;
+  onDelete: (id: string) => void;
+};
 
-  {
-    name: "Football",
-    imageUrl: "/images/category/category-football.png",
-    description: "lorem ipsum",
-  },
-];
-
-const CategroryTable = () => {
+const CategroryTable = ({
+  categories,
+  onEdit,
+  onDelete,
+}: TCategoryTableProps) => {
   return (
     <div className="bg-white rounded-xl border border-gray-200">
       <table className="w-full text-left border-collapse">
@@ -28,7 +26,7 @@ const CategroryTable = () => {
           </tr>
         </thead>
         <tbody>
-          {categoryData.map((data, index) => (
+          {categories.map((data, index) => (
             <tr
               key={index}
               className="border-b border-gray-200 last:border-b-0"
@@ -38,7 +36,7 @@ const CategroryTable = () => {
                   <div className="aspect-square bg-gray-100 rounded-md">
                     <Image
                       className="aspect-square object-contain"
-                      src={data.imageUrl}
+                      src={getImageUrl(data.imageUrl)}
                       alt=""
                       width={52}
                       height={52}
@@ -51,10 +49,16 @@ const CategroryTable = () => {
               <td className="px-6 py-4 font-medium">{data.description}</td>
 
               <td className="px-6 py-7.5 flex gap-3 items-center h-full text-gray-600">
-                <button>
+                <button
+                  onClick={() => onEdit?.(data)}
+                  className="cursor-pointer"
+                >
                   <FiEdit size={20}></FiEdit>
                 </button>
-                <button>
+                <button
+                  onClick={() => onDelete?.(data._id)}
+                  className="cursor-pointer"
+                >
                   <FiTrash size={20}></FiTrash>
                 </button>
               </td>
